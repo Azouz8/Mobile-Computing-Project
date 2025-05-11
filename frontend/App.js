@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { LogBox, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Constants from 'expo-constants';
+
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { CartProvider } from './src/context/CartContext';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import LoadingScreen from './src/components/LoadingScreen';
-import MainTabNavigation from './src/navigation/Navigator'; // ✅ IMPORT THIS
+import MainTabNavigation from './src/navigation/Navigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,10 +23,8 @@ const Navigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {user ? (
-        // ✅ Show MainTabNavigation after login/signup
         <Stack.Screen name="Main" component={MainTabNavigation} />
       ) : (
-        // Non-authenticated stack
         <>
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="SignupScreen" component={SignupScreen} />
@@ -34,6 +35,16 @@ const Navigation = () => {
 };
 
 export default function App() {
+  useEffect(() => {
+    // Suppress warnings/logs in production only
+    if (!Constants.expoConfig.extra?.debug) {
+      console.log = () => {};
+      console.warn = () => {};
+      console.error = () => {};
+      LogBox.ignoreAllLogs(true); // Suppresses all yellow box warnings
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <CartProvider>

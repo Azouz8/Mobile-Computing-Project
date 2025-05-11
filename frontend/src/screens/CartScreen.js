@@ -16,31 +16,33 @@ const CartScreen = ({ navigation }) => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (!user) {
-      Alert.alert('Error', 'Please login to checkout');
-      navigation.navigate('LoginScreen');
+      Alert.alert("Error", "Please login to checkout");
+      navigation.navigate("LoginScreen");
       return;
     }
-
-    try {
-      const checkoutData = {
-        name: user.name,
-        email: user.email,
-        location: `${user.address}, ${user.city}, ${user.country}`,
-        cartItems: cartItems.map(item => ({
-          _id: item._id,
-          quantity: item.quantity,
-        })),
-      };
-
-      const response = await cartAPI.checkout(checkoutData);
-      Alert.alert('Success', 'Order placed successfully!');
-      clearCart();
-      navigation.navigate('HomeScreen');
-    } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to place order');
-    }
+    // Navigate to LocationPickerScreen and pass a callback (onLocationPicked) so that when the user confirms a location, the order is sent.
+    navigation.navigate("LocationPickerScreen", {
+      onLocationPicked: (pickedLocation) => {
+        const checkoutData = {
+          name: user.name,
+          email: user.email,
+          location: pickedLocation.address || (user.address + ", " + user.city + ", " + user.country),
+          cartItems: cartItems.map(item => ({ _id: item._id, quantity: item.quantity }))
+        };
+        (async () => {
+          try {
+            const response = await cartAPI.checkout(checkoutData);
+            Alert.alert("Success", "Order placed successfully!");
+            clearCart();
+            navigation.navigate("HomeScreen");
+          } catch (error) {
+            Alert.alert("Error", error.message || "Failed to place order");
+          }
+        })();
+      }
+    });
   };
 
   const renderItem = ({ item }) => (

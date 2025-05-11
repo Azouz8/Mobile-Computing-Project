@@ -12,6 +12,7 @@ import CartScreen from "../screens/CartScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
 import SignupScreen from "../screens/SignupScreen"; 
 import LoginScreen from "../screens/LoginScreen"; 
+import LocationPickerScreen from "../screens/LocationPickerScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -58,6 +59,11 @@ const HomeToDetails = () => {
       <Stack.Screen
         name="ProductDetailScreen"
         component={ProductDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LocationPickerScreen"
+        component={LocationPickerScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -121,4 +127,4 @@ const RootNavigator = () => {
   );
 };
 
-export default RootNavigator;
+export default RootNavigator;
