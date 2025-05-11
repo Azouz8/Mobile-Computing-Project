@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { styles } from '../styles/SignupScreenStyles';
+import NotificationService from '../services/NotificationService';
 
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -156,6 +157,7 @@ const SignupScreen = ({ navigation }) => {
           pinCode,
         };
         await signup(userData);
+        await NotificationService.scheduleSignupNotification(name);
       } catch (error) {
         Alert.alert('Error', error.message || 'Signup failed. Please try again.');
       }

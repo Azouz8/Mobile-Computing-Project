@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { LogBox, Platform } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Constants from 'expo-constants';
+import Toast from 'react-native-toast-message';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { CartProvider } from './src/context/CartContext';
@@ -36,12 +37,12 @@ const Navigation = () => {
 
 export default function App() {
   useEffect(() => {
-    // Suppress warnings/logs in production only
-    if (!Constants.expoConfig.extra?.debug) {
+    const isDebugMode = Constants.expoConfig?.extra?.debug;
+    if (!isDebugMode) {
       console.log = () => {};
       console.warn = () => {};
       console.error = () => {};
-      LogBox.ignoreAllLogs(true); // Suppresses all yellow box warnings
+      LogBox.ignoreAllLogs(true);
     }
   }, []);
 
@@ -51,6 +52,7 @@ export default function App() {
         <NavigationContainer>
           <Navigation />
         </NavigationContainer>
+        <Toast /> 
       </CartProvider>
     </AuthProvider>
   );

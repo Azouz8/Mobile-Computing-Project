@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { styles } from '../styles/LoginScreenStyles';
+import NotificationService from '../services/NotificationService';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -53,8 +54,9 @@ const LoginScreen = ({ navigation }) => {
       try {
         await login(email, password);
         navigation.navigate("Main");
-
+        await NotificationService.scheduleLoginNotification();
       } catch (error) {
+        await NotificationService.scheduleLoginFailureNotification();
         Alert.alert('Error', error.message || 'Login failed. Please try again.');
       }
     }
